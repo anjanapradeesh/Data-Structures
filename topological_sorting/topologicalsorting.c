@@ -45,7 +45,7 @@ void main() {
 }
 
 
-
+// Indegree: Sum of the column in the matrix corresponding to that node
 int indegree(int graph[][MAX_NODES], int n, int node) {
     int sum = 0;
     for (int i = 0; i < n; i++)
