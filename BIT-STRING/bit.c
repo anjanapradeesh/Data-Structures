@@ -1,127 +1,50 @@
 #include <stdio.h>
 
-int isPresent(int arr[], int size, int value);
-void readSet(int set[], int universal[], int size);
-void printSet(int set[], int size);
+typedef unsigned int Set;
 
 
-int n, n1, n2;
-
-
-void main() 
-{
-	// Read the Universal set
-	printf("Enter the size of the universal set: ");
-	scanf("%d", &n);
-	int U[n];
-	printf("Enter the elements in the Universal Set: \n");
-	readSet(U, NULL, n);
-
-	// Read the elements in the two sets
-	printf("Enter the size of set 1: ");
-	scanf("%d", &n1);
-	if (n1 > n || n1 < 0) {
-		printf("Invalid size!\n");
-		return;
-	}
-	int set1[n1];
-	printf("Enter the elements in set 1: \n");
-	readSet(set1, U, n1);
-	printf("Enter the size of set 2: ");
-	scanf("%d", &n2);
-	if (n2 > n || n2 < 0) {
-		printf("Invalid size!\n");
-		return;
-	}
-	int set2[n2];
-	printf("Enter the elements in set 2: \n");
-	readSet(set2, U, n2);
-
-	// Represent the sets using bit vectors
-	int S1[n], S2[n];
-	for (int i = 0; i < n; i++) {
-		S1[i] = 0, S2[i] = 0;
-		for (int j = 0; j < n1; j++) {
-			if (U[i] == set1[j]) {
-				S1[i] = 1;
-				break;
-			}
-		}
-		for (int j = 0; j < n2; j++) {
-			if (U[i] == set2[j]) {
-				S2[i] = 1;
-				break;
-			}
-		}
-	}
-
-	// Perform Union
-	int setUnion[n];
-	for (int i = 0; i < n; i++) {
-		if (S1[i] == 1 || S2[i] == 1)
-			setUnion[i] = 1;
-		else
-			setUnion[i] = 0;
-	}
-
-	// Perform Intersection
-	int setIntersection[n];
-	for (int i = 0; i < n; i++) {
-		if (S1[i] == 1 && S2[i] == 1)
-			setIntersection[i] = 1;
-		else
-			setIntersection[i] = 0;
-	}
-
-	// Print the sets
-	printf("U    : ");
-	printSet(U, n);
-	printf("Set 1: ");
-	printSet(S1, n);
-	printf("Set 2: ");
-	printSet(S2, n);
-	printf("S1uS2: ");
-	printSet(setUnion, n);
-	printf("S1nS2: ");
-	printSet(setIntersection, n);
+void printBitString(Set s, int n) {
+    printf("Elements: ");
+    for (int i = n - 1; i >= 0; i--) printf("%2d ", i);
+    printf("\nBits:     ");
+    for (int i = n - 1; i >= 0; i--) printf(" %d ", (s >> i) & 1);
+    printf("\n");
 }
 
-
-// Check whether a value is present in an array: Linear Search
-int isPresent(int arr[], int size, int value) {
-	for (int i = 0; i < size; i++) {
-		if (arr[i] == value)
-			return 1;
-	}
-	return 0;
+void printSet(Set s, int n) {
+    printf("{ ");
+    for (int i = 0; i < n; i++) {
+        if (s & (1U << i))
+            printf("%d ", i);
+    }
+    printf("}\n");
 }
 
-// Read a set
-void readSet(int set[], int universal[], int size) {
-	int element;
-	for (int i = 0; i < size; i++) {
-		printf("Element %d: ", i + 1);
-		scanf("%d", &element);
-		// If the element is not already in the set and is present in the universal set or if we are reading the Universal set itself
-		if (!isPresent(set, i, element) && (universal == NULL || isPresent(universal, n, element))) {
-			set[i] = element;
-		} else {
-			printf("Invalid Entry!\n");
-			i--;
-		}
-	}
+int main() {
+    int n = 9; 
+    // Set A = 0b10101010;
+    // Set B = 0b10111000; 
+    int A=0b10101010;
+    int B=0b10111000;
+
+    printf("Set A = "); printSet(A, n);
+    printBitString(A, n);
+
+    printf("\nSet B = "); printSet(B, n);
+    printBitString(B, n);
+
+    Set U = ((A) | (B));
+    Set I = ((A) & (B));
+    Set D = ((A) & ~(B));
+
+    printf("\nA ∪ B = "); printSet(U, n);
+    printBitString(U, n);
+
+    printf("\nA ∩ B = "); printSet(I, n);
+    printBitString(I, n);
+
+    printf("\nA - B = "); printSet(D, n);
+    printBitString(D, n);
+
+    return 0;
 }
-
-// Print a set
-void printSet(int set[], int size) {	
-	for (int i = 0; i < size; i++) {
-		printf("%d ", set[i]);
-	}
-	printf("\n");
-}
-
-
-
-
-
-
